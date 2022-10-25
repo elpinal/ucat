@@ -1,0 +1,9 @@
+depend:
+  standard-library-1.7
+  cubical
+include: .
+flags:
+  --safe
+  --exact-split
+  --without-K
+  --cubical
