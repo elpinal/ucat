@@ -103,7 +103,7 @@ module _ {o h} (𝒞 : Category o h) where
   isoId = record { f = id ; is-iso = isIsoId }
 
   helper3 : ∀ {A B} → Iso A B ≡ (Σ[ f ∈ Hom A B ] isIso f)
-  helper3 = ua ((λ x → (Iso.f x) , Iso.is-iso x) , record { equiv-proof = λ y → (record { f = fst y ; is-iso = snd y } , refl) , λ where (z , e) i → record { f = fst (e (~ i)) ; is-iso = snd (e (~ i)) } , λ j → fst (e (~ i ∨  j)) , snd (e (~ i ∨ j)) })
+  helper3 = ua ((λ x → (Iso.f x) , Iso.is-iso x) , record { equiv-proof = λ y → (record { f = fst y ; is-iso = snd y } , refl) , λ where (z , e) i → record { f = fst (e (~ i)) ; is-iso = snd (e (~ i)) } , λ j → fst (e (~ i ∨ j)) , snd (e (~ i ∨ j)) })
 
   isSetIso : ∀ A B → isSet (Iso A B)
   isSetIso A B  = subst isSet (sym helper3) (isSetisProp⇒isSetΣ isSetHom isPropIsIso)
