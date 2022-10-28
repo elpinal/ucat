@@ -30,30 +30,39 @@ _[_,_] : ∀ {o h} (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob �
 _[_∘_] : ∀ {o h} (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
 𝒞 [ g ∘ f ] = Category._∘_ 𝒞 g f
 
-isSetisProp⇒isSetΣ : ∀ {ℓ} {A : Type ℓ} {B : A → Type ℓ}
+isSetisProp⇒isSetΣ : ∀ {ℓ} {A : Type ℓ} {ℓ′} {B : A → Type ℓ′}
   → isSet A → (∀ a → isProp (B a)) → isSet (Σ A B)
 isSetisProp⇒isSetΣ isSetA isPropB u v p q = p≡q
   where
-    H : (u ≡ v) ≡ (u .fst ≡ v .fst)
-    H = ua (cong fst , isEmbeddingFstΣProp isPropB)
+    H : (u ≡ v) ≃ (u .fst ≡ v .fst)
+    H = cong fst , isEmbeddingFstΣProp isPropB
 
     h : cong fst p ≡ cong fst q
     h = isSetA (fst u) (fst v) (cong fst p) (cong fst q)
 
+    x : isContr (fiber (cong fst) (cong fst p))
+    x = H .snd .equiv-proof (cong fst p)
+
+    r : u ≡ v
+    r = x .fst .fst
+
+    y : cong fst r ≡ cong fst p
+    y = x .fst .snd
+
+    z : ∀ (fib : fiber (cong fst) (cong fst p)) → (r , y) ≡ fib
+    z = x .snd
+
+    z1 : Path (fiber (cong fst) (cong fst p)) (r , y) (p , refl)
+    z1 = z (p , refl)
+
+    z2 : Path (fiber (cong fst) (cong fst p)) (r , y) (q , sym h)
+    z2 = z (q , sym h)
+
+    z3 : Path (fiber (cong fst) (cong fst p)) (p , refl) (q , sym h)
+    z3 = sym z1 ∙ z2
+
     p≡q : p ≡ q
-    p≡q =
-        p
-      ≡⟨ sym (transport⁻Transport H p) ⟩
-        transport⁻ H (transport H p)
-      ≡⟨ cong (transport⁻ H) (uaβ (cong fst , isEmbeddingFstΣProp isPropB) p) ⟩
-        transport⁻ H (cong fst p)
-      ≡⟨ cong (transport⁻ H) h ⟩
-        transport⁻ H (cong fst q)
-      ≡⟨ cong (transport⁻ H) (sym (uaβ (cong fst , isEmbeddingFstΣProp isPropB) q)) ⟩
-        transport⁻ H (transport H q)
-      ≡⟨ transport⁻Transport H q ⟩
-        q
-      ∎
+    p≡q = cong fst z3
 
 module _ {o h} (𝒞 : Category o h) where
   open Category 𝒞
