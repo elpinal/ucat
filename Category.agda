@@ -136,6 +136,9 @@ module _ {o h} (𝒞 : Category o h) where
   isPropIsUnivCategory : isProp isUnivCategory
   isPropIsUnivCategory = isPropImplicitΠ2 (λ A B → isPropIsEquiv idToIso)
 
+  isoToId : isUnivCategory → ∀ {A B} → Iso A B → A ≡ B
+  isoToId u = invIsEq u
+
 record UnivCategory o h : Type (ℓ-suc (ℓ-max o h)) where
   field
     𝒞 : Category o h
