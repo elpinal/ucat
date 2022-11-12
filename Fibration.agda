@@ -173,11 +173,8 @@ module _ {o h} {𝒞 : Category o h} {o₁ h₁} (𝒟 : Displayed 𝒞 o₁ h�
     cartesianLiftDomainUnique : isUnivDisplayed 𝒟 → L.X ≡ L′.X
     cartesianLiftDomainUnique u = vertIsoToId 𝒟 u cartesianLiftDomainVertIso
 
-    triangle1 : PathP (λ i → 𝒟.Hom (𝒞.identʳ {f = f} i) L.X Y) (L′.f′ 𝒟.∘ k′) L.f′
-    triangle1 = symP {A = (λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L.X Y)} (toPathP (sym t2))
-
-    triangle2 : PathP (λ i → 𝒟.Hom (𝒞.identʳ {f = f} i) L′.X Y) (L.f′ 𝒟.∘ k) L′.f′
-    triangle2 = symP {A = (λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L′.X Y)} (toPathP (sym t1))
+    triangle : PathP (λ i → 𝒟.Hom (𝒞.identʳ {f = f} i) L′.X Y) (L.f′ 𝒟.∘ k) L′.f′
+    triangle = symP {A = (λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L′.X Y)} (toPathP (sym t1))
 
     f′-unique : (u : isUnivDisplayed 𝒟) → PathP (λ i → 𝒟.Hom f (cartesianLiftDomainUnique u i) Y) L.f′ L′.f′
     f′-unique u = toPathP r
@@ -200,7 +197,7 @@ module _ {o h} {𝒞 : Category o h} {o₁ h₁} (𝒟 : Displayed 𝒞 o₁ h�
         e = cong (subst (λ x → 𝒟.Hom x L′.X Y) 𝒞.identʳ) (cong (L.f′ 𝒟.∘_) s)
 
         r : subst (λ x → 𝒟.Hom f x Y) (cartesianLiftDomainUnique u) L.f′ ≡ L′.f′
-        r = t ∙∙ e ∙∙ fromPathP triangle2
+        r = t ∙∙ e ∙∙ fromPathP triangle
 
     cartesianLiftUnique : isUnivDisplayed 𝒟 → L ≡ L′
     cartesianLiftUnique u i = record
