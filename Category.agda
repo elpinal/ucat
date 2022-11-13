@@ -120,6 +120,14 @@ module _ {o h} (𝒞 : Category o h) where
   isSetIso : ∀ A B → isSet (Iso A B)
   isSetIso A B  = subst isSet (sym helper3) (isSetisProp⇒isSetΣ isSetHom isPropIsIso)
 
+  PathIso : ∀ {A B} (x y : Iso A B)
+    → Iso.f x ≡ Iso.f y
+    → x ≡ y
+  PathIso {A} {B} x y p i = record
+    { f = p i
+    ; is-iso = isProp→PathP (λ i → isPropIsIso (p i)) (Iso.is-iso x) (Iso.is-iso y) i
+    }
+
   idToIso : ∀ {A B} → A ≡ B → Iso A B
   idToIso {A} p = subst (Iso A) p isoId
 
