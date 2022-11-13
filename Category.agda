@@ -30,6 +30,7 @@ _[_,_] : ∀ {o h} (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob �
 _[_∘_] : ∀ {o h} (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
 𝒞 [ g ∘ f ] = Category._∘_ 𝒞 g f
 
+-- TODO: rewrite using Cubical.Reflection.RecordEquiv.
 isSetisProp⇒isSetΣ : ∀ {ℓ} {A : Type ℓ} {ℓ′} {B : A → Type ℓ′}
   → isSet A → (∀ a → isProp (B a)) → isSet (Σ A B)
 isSetisProp⇒isSetΣ isSetA isPropB u v p q = p≡q
@@ -108,6 +109,8 @@ module _ {o h} (𝒞 : Category o h) where
       f : Hom A B
       is-iso : isIso f
 
+    inv = isIso.inv is-iso
+
   isoId : ∀ {A} → Iso A A
   isoId = record { f = id ; is-iso = isIsoId }
 
@@ -138,6 +141,36 @@ module _ {o h} (𝒞 : Category o h) where
 
   isoToId : isUnivCategory → ∀ {A B} → Iso A B → A ≡ B
   isoToId u = invIsEq u
+
+  lemmaIdToIso : ∀ {A A′ B B′ : Ob} → (p : A ≡ A′) → (q : B ≡ B′) → (f : Hom A B)
+    → transport (λ i → Hom (p i) (q i)) f ≡ Iso.f (idToIso q) ∘ (f ∘ Iso.inv (idToIso p))
+  lemmaIdToIso {A = A} {B = B} p q f = J P base q
+    where
+      Q : ∀ y (r : A ≡ y) → Type h
+      Q y r = transport (λ i → Hom (r i) B) f ≡ Iso.f (idToIso refl) ∘ (f ∘ Iso.inv (idToIso r))
+
+      base′ : transport refl f ≡ Iso.f (idToIso refl) ∘ (f ∘ Iso.inv (idToIso refl))
+      base′ =
+          transport refl f
+        ≡⟨ transportRefl _ ⟩
+          f
+        ≡⟨ sym identʳ ⟩
+          f ∘ id
+        ≡⟨ cong (f ∘_) (sym (transportRefl _)) ⟩
+          f ∘ transport refl id
+        ≡⟨ sym identˡ ⟩
+          id ∘ (f ∘ transport refl id)
+        ≡⟨ cong (λ w → w ∘ (f ∘ transport refl id)) (sym (transportRefl _)) ⟩
+          transport refl id ∘ (f ∘ transport refl id)
+        ≡⟨ refl ⟩
+          Iso.f (idToIso refl) ∘ (f ∘ Iso.inv (idToIso refl))
+        ∎
+
+      P : ∀ y (r : B ≡ y) → Type h
+      P y r = transport (λ i → Hom (p i) (r i)) f ≡ Iso.f (idToIso r) ∘ (f ∘ Iso.inv (idToIso p))
+
+      base : P B refl
+      base = J Q base′ p
 
 record UnivCategory o h : Type (ℓ-suc (ℓ-max o h)) where
   field
