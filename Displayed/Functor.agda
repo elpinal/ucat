@@ -29,17 +29,15 @@ module UtilComm where
     transport-fillerExt⁻ (cong C p) i (F _ (transport-fillerExt (cong B p) i Bx))
 
 
-module _ {o h} {ℂ : Category o h} {o′ h′} {𝔻 : Category o′ h′}
-  {ℓ m} {𝒞 : Displayed ℂ ℓ m} {ℓ′ m′} {𝒟 : Displayed 𝔻 ℓ′ m′} where
-  private
-    module ℂ = Category.Category ℂ
-    module 𝔻 = Category.Category 𝔻
-    module 𝒞 = Displayed.Displayed 𝒞
-    module 𝒟 = Displayed.Displayed 𝒟
+module _ {o h} {ℂ : Category o h} {o′ h′} {𝔻 : Category o′ h′} where
+  private module ℂ = Category.Category ℂ
 
-  record DisplayedFunctor (Base : Functor ℂ 𝔻) : Type (levelOfTerm ℂ ⊔ levelOfTerm 𝔻 ⊔ levelOfTerm 𝒞 ⊔ levelOfTerm 𝒟) where
+  record DisplayedFunctor (Base : Functor ℂ 𝔻) {ℓ m} (𝒞 : Displayed ℂ ℓ m) {ℓ′ m′} (𝒟 : Displayed 𝔻 ℓ′ m′)
+    : Type (levelOfTerm ℂ ⊔ levelOfTerm 𝔻 ⊔ levelOfTerm 𝒞 ⊔ levelOfTerm 𝒟) where
     private
       module Base = Functor.Functor Base
+      module 𝒞 = Displayed.Displayed 𝒞
+      module 𝒟 = Displayed.Displayed 𝒟
 
     field
       F₀ : ∀ {A : ℂ.Ob} → 𝒞.Ob A → 𝒟.Ob (Base.₀ A)
@@ -52,7 +50,15 @@ module _ {o h} {ℂ : Category o h} {o′ h′} {𝔻 : Category o′ h′}
     ₀ = F₀
     ₁ = F₁
 
-  ∫F : ∀ {Base : Functor ℂ 𝔻} → DisplayedFunctor Base → Functor (∫ 𝒞) (∫ 𝒟)
+module _ {o h} {ℂ : Category o h} {o′ h′} {𝔻 : Category o′ h′}
+  {ℓ m} {𝒞 : Displayed ℂ ℓ m} {ℓ′ m′} {𝒟 : Displayed 𝔻 ℓ′ m′} where
+  private
+    module ℂ = Category.Category ℂ
+    module 𝔻 = Category.Category 𝔻
+    module 𝒞 = Displayed.Displayed 𝒞
+    module 𝒟 = Displayed.Displayed 𝒟
+
+  ∫F : ∀ {Base : Functor ℂ 𝔻} → DisplayedFunctor Base 𝒞 𝒟 → Functor (∫ 𝒞) (∫ 𝒟)
   ∫F {Base} F = record
     { F₀ = λ where (A , X) → Base.₀ A , F.₀ X
     ; F₁ = λ where (f , f′) → Base.₁ f , F.₁ f′
@@ -63,7 +69,8 @@ module _ {o h} {ℂ : Category o h} {o′ h′} {𝔻 : Category o′ h′}
       module Base = Functor.Functor Base
       module F = DisplayedFunctor F
 
-  fibreFunctor : ∀ {Base : Functor ℂ 𝔻} (F : DisplayedFunctor Base) (A : ℂ.Ob) → Functor (fibreCategory 𝒞 A) (fibreCategory 𝒟 (Functor.₀ Base A))
+  fibreFunctor : ∀ {Base : Functor ℂ 𝔻} (F : DisplayedFunctor Base 𝒞 𝒟) (A : ℂ.Ob)
+    → Functor (fibreCategory 𝒞 A) (fibreCategory 𝒟 (Functor.₀ Base A))
   fibreFunctor {Base} F A = record
     { F₀ = F.₀
     ; F₁ = F₁

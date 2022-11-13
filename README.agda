@@ -11,5 +11,6 @@ import Functor.Diagonal
 
 import Displayed
 import Displayed.Functor
+import Displayed.Reindex
 
 import Fibration
