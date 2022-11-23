@@ -2,6 +2,9 @@ module Bicategory where
 
 open import Cubical.Core.Everything
 open import Cubical.Foundations.Prelude
+open import Cubical.Foundations.HLevels
+
+open import Category
 
 -- Notice that the order of arguments to composition operations is reversed from the paper.
 record Bicategory o c d : Type (ℓ-suc (ℓ-max o (ℓ-max c d))) where
@@ -36,7 +39,7 @@ record Bicategory o c d : Type (ℓ-suc (ℓ-max o (ℓ-max c d))) where
     -- Laws.
     ident₂ˡ : ∀ {A B} {f g : 1Cell A B} {θ : 2Cell f g} → id₂ · θ ≡ θ
     ident₂ʳ : ∀ {A B} {f g : 1Cell A B} {θ : 2Cell f g} → θ · id₂ ≡ θ
-    assoc₂ʳ : ∀ {A B} {f g h i : 1Cell A B} {θ : 2Cell f g} {γ : 2Cell g h} {τ : 2Cell h i} → (τ · γ) · θ ≡ τ · (γ · θ)
+    assoc₂ : ∀ {A B} {f g h i : 1Cell A B} {θ : 2Cell f g} {γ : 2Cell g h} {τ : 2Cell h i} → (τ · γ) · θ ≡ τ · (γ · θ)
 
     ▹id : ∀ {A B} {f : 1Cell A B} {g : 1Cell B B} → id₂ {f = g} ▹ f ≡ id₂ {f = g ∘₁ f}
     ▹· : ∀ {A B C} {f : 1Cell A B} {g h i : 1Cell B C} {θ : 2Cell g h} {γ : 2Cell h i} → (γ · θ) ▹ f ≡ (γ ▹ f) · (θ ▹ f)
@@ -85,3 +88,63 @@ record Bicategory o c d : Type (ℓ-suc (ℓ-max o (ℓ-max c d))) where
 
       iγ : 2Cell (i ∘₁ f) (i ∘₁ _)
       iγ = i ◃ γ
+
+private
+  variable o c d : Level
+
+module _ (𝔹 : Bicategory o c d) where
+  module 𝔹 = Bicategory 𝔹
+  open 𝔹
+
+  HomCat : (A B : Ob) → Category c d
+  HomCat A B = record
+                 { Ob = 1Cell A B
+                 ; Hom = 2Cell
+                 ; isSetHom = isSet2Cell
+                 ; id = id₂
+                 ; _∘_ = _·_
+                 ; identˡ = ident₂ˡ
+                 ; identʳ = ident₂ʳ
+                 ; assoc = assoc₂
+                 }
+
+  record isInv {A B} {f g : 1Cell A B} (θ : 2Cell f g) : Type d where
+    field
+      inv : 2Cell g f
+      invˡ : inv · θ ≡ id₂
+      invʳ : θ · inv ≡ id₂
+
+  isInvId : ∀ {A B} {f : 1Cell A B} → isInv (id₂ {f = f})
+  isInvId = record { inv = id₂ ; invˡ = ident₂ˡ ; invʳ = ident₂ʳ }
+
+  isPropIsInv : ∀ {A B} {f g : 1Cell A B} (θ : 2Cell f g) → isProp (isInv θ)
+  isPropIsInv θ x y i = record { inv = p i ; invˡ = q i ; invʳ = r i }
+    where
+      module x = isInv x
+      module y = isInv y
+
+      p : x.inv ≡ y.inv
+      p =
+          x.inv
+        ≡⟨ sym ident₂ˡ ⟩
+          id₂ · x.inv
+        ≡⟨ cong (_· x.inv) (sym y.invˡ) ⟩
+          (y.inv · θ) · x.inv
+        ≡⟨ assoc₂ ⟩
+          y.inv · (θ · x.inv)
+        ≡⟨ cong (y.inv ·_) x.invʳ ⟩
+          y.inv · id₂
+        ≡⟨ ident₂ʳ ⟩
+          y.inv
+        ∎
+
+      q : PathP (λ i → p i · θ ≡ id₂) x.invˡ y.invˡ
+      q = isSet→isSet' isSet2Cell _ _ _ _
+
+      r : PathP (λ i → θ · p i ≡ id₂) x.invʳ y.invʳ
+      r = isSet→isSet' isSet2Cell _ _ _ _
+
+  record Inv2Cell {A B} (f g : 1Cell A B) : Type d where
+    field
+      θ : 2Cell f g
+      is-inv : isInv θ

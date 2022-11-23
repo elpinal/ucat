@@ -35,6 +35,7 @@ _[_∘_] : ∀ {o h} (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [
 module _ {o h} (𝒞 : Category o h) where
   open Category 𝒞
 
+  -- TODO: Swap isoˡ and isoʳ.
   record isIso {A B : Ob} (f : Hom A B) : Type h where
     field
       inv : Hom B A
