@@ -14,3 +14,5 @@ import Displayed.Functor
 import Displayed.Reindex
 
 import Fibration
+
+import Bicategory
