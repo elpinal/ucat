@@ -6,6 +6,8 @@ open import Cubical.Foundations.Univalence
 open import Cubical.Foundations.Transport
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.HLevels
+open import Cubical.Foundations.Isomorphism using (isoToPath)
+open import Cubical.Reflection.RecordEquiv
 open import Cubical.Data.Sigma
 
 record Category o h : Type (ℓ-suc (ℓ-max o h)) where
@@ -29,41 +31,6 @@ _[_,_] : ∀ {o h} (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob �
 
 _[_∘_] : ∀ {o h} (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
 𝒞 [ g ∘ f ] = Category._∘_ 𝒞 g f
-
--- TODO: rewrite using Cubical.Reflection.RecordEquiv.
-isSetisProp⇒isSetΣ : ∀ {ℓ} {A : Type ℓ} {ℓ′} {B : A → Type ℓ′}
-  → isSet A → (∀ a → isProp (B a)) → isSet (Σ A B)
-isSetisProp⇒isSetΣ isSetA isPropB u v p q = p≡q
-  where
-    H : (u ≡ v) ≃ (u .fst ≡ v .fst)
-    H = cong fst , isEmbeddingFstΣProp isPropB
-
-    h : cong fst p ≡ cong fst q
-    h = isSetA (fst u) (fst v) (cong fst p) (cong fst q)
-
-    x : isContr (fiber (cong fst) (cong fst p))
-    x = H .snd .equiv-proof (cong fst p)
-
-    r : u ≡ v
-    r = x .fst .fst
-
-    y : cong fst r ≡ cong fst p
-    y = x .fst .snd
-
-    z : ∀ (fib : fiber (cong fst) (cong fst p)) → (r , y) ≡ fib
-    z = x .snd
-
-    z1 : Path (fiber (cong fst) (cong fst p)) (r , y) (p , refl)
-    z1 = z (p , refl)
-
-    z2 : Path (fiber (cong fst) (cong fst p)) (r , y) (q , sym h)
-    z2 = z (q , sym h)
-
-    z3 : Path (fiber (cong fst) (cong fst p)) (p , refl) (q , sym h)
-    z3 = sym z1 ∙ z2
-
-    p≡q : p ≡ q
-    p≡q = cong fst z3
 
 module _ {o h} (𝒞 : Category o h) where
   open Category 𝒞
@@ -111,14 +78,13 @@ module _ {o h} (𝒞 : Category o h) where
 
     inv = isIso.inv is-iso
 
+  unquoteDecl IsoIsoΣ = declareRecordIsoΣ IsoIsoΣ (quote Iso)
+
   isoId : ∀ {A} → Iso A A
   isoId = record { f = id ; is-iso = isIsoId }
 
-  helper3 : ∀ {A B} → Iso A B ≡ (Σ[ f ∈ Hom A B ] isIso f)
-  helper3 = ua ((λ x → (Iso.f x) , Iso.is-iso x) , record { equiv-proof = λ y → (record { f = fst y ; is-iso = snd y } , refl) , λ where (z , e) i → record { f = fst (e (~ i)) ; is-iso = snd (e (~ i)) } , λ j → fst (e (~ i ∨ j)) , snd (e (~ i ∨ j)) })
-
   isSetIso : ∀ A B → isSet (Iso A B)
-  isSetIso A B  = subst isSet (sym helper3) (isSetisProp⇒isSetΣ isSetHom isPropIsIso)
+  isSetIso A B = subst isSet (sym (isoToPath IsoIsoΣ)) (isSetΣSndProp isSetHom isPropIsIso)
 
   PathIso : ∀ {A B} (x y : Iso A B)
     → Iso.f x ≡ Iso.f y

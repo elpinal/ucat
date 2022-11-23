@@ -36,7 +36,7 @@ module _ {o h} {𝒞 : Category o h} {o′ h′} {𝒟 : Category o′ h′} whe
     isSetNaturalTransformation =
       subst isSet
         (sym (isoToPath NaturalTransformationIsoΣ))
-        (isSetisProp⇒isSetΣ (isSetΠ λ A → 𝒟.isSetHom) λ component → isPropΠ2 λ A B → isPropImplicitΠ λ f → 𝒟.isSetHom _ _)
+        (isSetΣSndProp (isSetΠ λ A → 𝒟.isSetHom) λ component → isPropΠ2 λ A B → isPropImplicitΠ λ f → 𝒟.isSetHom _ _)
 
     componentEmbed : ∀ (α β : NaturalTransformation F G)
       → NaturalTransformation.component α ≡ NaturalTransformation.component β
