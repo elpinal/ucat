@@ -1,5 +1,7 @@
 module README where
 
+import Data.Ordinal
+
 import Category
 import Functor
 import NaturalTransformation
