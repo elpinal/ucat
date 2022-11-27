@@ -22,6 +22,66 @@ record Functor {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h�
   ₀ = F₀
   ₁ = F₁
 
+module _ {o h} {𝒞 : Category o h} where
+  idFunctor : Functor 𝒞 𝒞
+  idFunctor = record { F₀ = λ A → A ; F₁ = λ f → f ; identity = refl ; compose = refl }
+
+module _ {o h o′ h′ o″ h″} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} where
+  _∘F_ : Functor 𝒟 ℰ → Functor 𝒞 𝒟 → Functor 𝒞 ℰ
+  G ∘F F = record
+    { F₀ = λ A → G.₀ (F.₀ A)
+    ; F₁ = λ f → G.₁ (F.₁ f)
+    ; identity = cong G.₁ F.identity ∙ G.identity
+    ; compose = cong G.₁ F.compose ∙ G.compose
+    }
+    where
+      module F = Functor F
+      module G = Functor G
+
+module _ {o h o′ h′} {𝒞 : Category o h} {𝒟 : Category o′ h′} where
+  private
+    module 𝒟 = Category.Category 𝒟
+
+  -- Even if the codomain category is not univalent, unicity and
+  -- associativity laws hold up to *path*, not just natural
+  -- isomorphism.
+
+  identFˡ : (F : Functor 𝒞 𝒟) → idFunctor ∘F F ≡ F
+  identFˡ F i = record
+    { F₀ = F.₀
+    ; F₁ = F.₁
+    ; identity = 𝒟.isSetHom _ _ (F.identity ∙ refl) F.identity i
+    ; compose = 𝒟.isSetHom _ _ (F.compose ∙ refl) F.compose i
+    }
+    where
+      module F = Functor F
+
+  identFʳ : (F : Functor 𝒞 𝒟) → F ∘F idFunctor ≡ F
+  identFʳ F i = record
+    { F₀ = F.₀
+    ; F₁ = F.₁
+    ; identity = 𝒟.isSetHom _ _ (refl ∙ F.identity) F.identity i
+    ; compose = 𝒟.isSetHom _ _ (refl ∙ F.compose) F.compose i
+    }
+    where
+      module F = Functor F
+
+module _ {o h o′ h′ o″ h″ o‴ h‴} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} {ℱ : Category o‴ h‴} where
+  private
+    module ℱ = Category.Category ℱ
+
+  assocFʳ : (F : Functor 𝒞 𝒟) (G : Functor 𝒟 ℰ) (H : Functor ℰ ℱ) → (H ∘F G) ∘F F ≡ H ∘F (G ∘F F)
+  assocFʳ F G H i = record
+    { F₀ = λ A → H.₀ (G.₀ (F.₀ A))
+    ; F₁ = λ f → H.₁ (G.₁ (F.₁ f))
+    ; identity = ℱ.isSetHom _ _ (cong (λ f → H.₁ (G.₁ f)) F.identity ∙ (cong H.₁ G.identity ∙ H.identity)) (cong H.₁ (cong G.₁ F.identity ∙ G.identity) ∙ H.identity) i
+    ; compose = ℱ.isSetHom _ _ (cong (λ f → H.₁ (G.₁ f)) F.compose ∙ (cong H.₁ G.compose ∙ H.compose)) (cong H.₁ (cong G.₁ F.compose ∙ G.compose) ∙ H.compose) i
+    }
+    where
+      module F = Functor F
+      module G = Functor G
+      module H = Functor H
+
 module _ {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) where
   private
     module 𝒞 = Category.Category 𝒞
