@@ -121,3 +121,14 @@ module _ {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) whe
       compose : ∀ {A B C} {f : 𝒞 [ A , B ]} {g : 𝒞 [ B , C ]}
         → PathP (λ i → PathP (λ j → Path (𝒟 [ r i j A , r i j C ]) (F₁ (𝒞 [ g ∘ f ]) i j) (𝒟 [ F₁ g i j ∘ F₁ f i j ])) F.compose G.compose) (λ k → Functor.compose (p k)) (λ k → Functor.compose (q k))
       compose = helper′ F.compose G.compose (λ k → Functor.compose (p k)) (λ k → Functor.compose (q k)) r λ i j f → F₁ f i j
+
+private
+  variable
+    o h : Level
+    𝒞 𝒟 : Category o h
+
+isFaithful : (F : Functor 𝒞 𝒟) → Type _
+isFaithful {𝒞 = 𝒞} F = ∀ {A B} (f g : 𝒞.Hom A B) → F.₁ f ≡ F.₁ g → f ≡ g
+  where
+    module F = Functor F
+    module 𝒞 = Category.Category 𝒞

@@ -90,6 +90,12 @@ module _ {o h} {𝒞 : Category o h} {o′ h′} (𝒟 : Displayed 𝒞 o′ h�
     ; compose = refl
     }
 
+  isFaithfulForget : (∀ {A B} (f : 𝒞.Hom A B) X Y → isProp (𝒟.Hom f X Y)) → isFaithful Forget
+  isFaithfulForget isPropHom {A = A , X} {B = B , Y} (f , f′) (g , g′) f≡g i = f≡g i , p i
+    where
+      p : PathP (λ i → 𝒟.Hom (f≡g i) X Y) f′ g′
+      p = toPathP (isPropHom g X Y _ g′)
+
   record isDispIso {A B} {f : 𝒞.Hom A B} (is-iso : isIso 𝒞 f) {X Y} (f′ : 𝒟.Hom f X Y) : Type h′ where
     private module is-iso = isIso is-iso
     field
