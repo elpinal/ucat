@@ -17,4 +17,9 @@ import Displayed.Reindex
 
 import Fibration
 
-import Bicategory
+import Bicategories.Bicategory
+import Bicategories.LaxFunctor
+import Bicategories.Pseudofunctor
+import Bicategories.LaxTransformation
+import Bicategories.Pseudotransformation
+import Bicategories.Modification

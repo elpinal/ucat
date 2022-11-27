@@ -1,4 +1,4 @@
-module Bicategory where
+module Bicategories.Bicategory where
 
 open import Cubical.Core.Everything
 open import Cubical.Foundations.Prelude
@@ -8,6 +8,8 @@ open import Category
 
 -- Notice that the order of arguments to composition operations is reversed from the paper.
 record Bicategory o c d : Type (ℓ-suc (ℓ-max o (ℓ-max c d))) where
+  infixl 20 _·_
+
   field
     Ob : Type o
     1Cell : ∀ (A B : Ob) → Type c
@@ -80,21 +82,20 @@ record Bicategory o c d : Type (ℓ-suc (ℓ-max o (ℓ-max c d))) where
       → associator (g ∘₁ f) h i · associator f g (i ∘₁ h) ≡ ((i ◃ associator f g h) · associator f (h ∘₁ g) i) · (associator g h i ▹ f)
 
   -- Horizontal composition of 2-cells.
-  _∘₂_ : ∀ {A B C} {h i : 1Cell B C} {f g : 1Cell A B} → 2Cell f g → 2Cell h i → 2Cell (h ∘₁ f) (i ∘₁ g)
-  _∘₂_ {i = i} {f = f} γ θ = iγ · θf
+  _∘₂_ : ∀ {A B C} {h i : 1Cell B C} {f g : 1Cell A B} → 2Cell h i → 2Cell f g → 2Cell (h ∘₁ f) (i ∘₁ g)
+  _∘₂_ {h = h} {i = i} {f = f} {g = g} γ θ = γg · hθ
     where
-      θf : 2Cell (_ ∘₁ f) (i ∘₁ f)
-      θf = θ ▹ f
+      hθ : 2Cell (h ∘₁ _) (h ∘₁ _)
+      hθ = h ◃ θ
 
-      iγ : 2Cell (i ∘₁ f) (i ∘₁ _)
-      iγ = i ◃ γ
+      γg : 2Cell (_ ∘₁ g) (_ ∘₁ g)
+      γg = γ ▹ g
 
 private
   variable o c d : Level
 
 module _ (𝔹 : Bicategory o c d) where
-  module 𝔹 = Bicategory 𝔹
-  open 𝔹
+  open Bicategory 𝔹
 
   HomCat : (A B : Ob) → Category c d
   HomCat A B = record

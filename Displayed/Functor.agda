@@ -9,14 +9,7 @@ open import Category
 open import Functor
 open import Displayed
 
--- Copied from the standard library.
-levelOfTerm : ∀ {a} {A : Type a} → A → Level
-levelOfTerm {a} _ = a
-
-infixr 8 _⊔_
-
-_⊔_ : Level → Level → Level
-_⊔_ = ℓ-max
+open import LevelUtil
 
 module UtilComm where
   substCommSlice′ : ∀ {ℓ ℓ′ ℓ″} {A : Type ℓ}
