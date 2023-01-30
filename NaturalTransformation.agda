@@ -11,11 +11,62 @@ open import Cubical.Reflection.RecordEquiv
 open import Category
 open import Functor
 
+open import LevelUtil
+
+private variable
+  o h o′ h′ : Level
+
+module _ {C : CategoryData o h} {D : CategoryData o′ h′} where
+  private
+    module C = CategoryData C
+    module D = CategoryData D
+
+  record NaturalTransformationData (F G : FunctorData C D) : Type (o ⊔ h′) where
+    private
+      module F = FunctorData F
+      module G = FunctorData G
+
+    field
+      component : ∀ (A : C.Ob) → D.Hom (F.₀ A) (G.₀ A)
+
+  record isNaturalTransformation {F G : FunctorData C D} (α : NaturalTransformationData F G) : Type (o ⊔ h ⊔ h′) where
+    private
+      module F = FunctorData F
+      module G = FunctorData G
+      module α = NaturalTransformationData α
+
+    field
+      commute : ∀ (A B : C.Ob) {f : C.Hom A B} → α.component B D.∘ F.₁ f ≡ G.₁ f D.∘ α.component A
+
+  record NaturalTransformation⬆ (F G : FunctorData C D) : Type (o ⊔ h ⊔ h′) where
+    constructor naturalTransformation⬆
+
+    field
+      Data : NaturalTransformationData F G
+      is-natural-transformation : isNaturalTransformation Data
+
+    open NaturalTransformationData Data public
+    open isNaturalTransformation is-natural-transformation public
+
+private variable
+  C D : CategoryData o h
+
+idNatTransData : {F : FunctorData C D} → NaturalTransformationData F F
+idNatTransData {D = D} = record { component = λ A → CategoryData.id D }
+
+isNaturalTransformationIdNatTransData : isCategory D → {F : FunctorData C D} → isNaturalTransformation (idNatTransData {F = F})
+isNaturalTransformationIdNatTransData isCat = record { commute = λ A B → isCat.identˡ ∙ sym isCat.identʳ }
+  where module isCat = isCategory isCat
+
+idNatTrans⬆ : isCategory D → {F : FunctorData C D} → NaturalTransformation⬆ F F
+idNatTrans⬆ isCat = naturalTransformation⬆ idNatTransData (isNaturalTransformationIdNatTransData isCat)
+
 module _ {o h} {𝒞 : Category o h} {o′ h′} {𝒟 : Category o′ h′} where
   private
     module 𝒞 = Category.Category 𝒞
     module 𝒟 = Category.Category 𝒟
 
+  -- TODO: remove
   record NaturalTransformation (F G : Functor 𝒞 𝒟) : Type (ℓ-max o (ℓ-max h h′)) where
     private
       module F = Functor.Functor F
@@ -49,6 +100,7 @@ module _ {o h} {𝒞 : Category o h} {o′ h′} {𝒟 : Category o′ h′} whe
         a : ∀ {A B f} → PathP (λ i → 𝒟 [ p i B ∘ F.₁ f ] ≡ 𝒟 [ G.₁ f ∘ p i A ]) (α.commute A B {f}) (β.commute A B {f})
         a {A} {B} {f} = toPathP (𝒟.isSetHom _ _ _ _)
 
+  -- TODO: remove
   idNatTrans : ∀ {F : Functor 𝒞 𝒟} → NaturalTransformation F F
   idNatTrans {F} = record { component = λ A → 𝒟.id ; commute = λ A B {f} → 𝒟.identˡ ∙ sym 𝒟.identʳ }
 

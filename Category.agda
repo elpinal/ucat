@@ -10,6 +10,40 @@ open import Cubical.Foundations.Isomorphism using (isoToPath)
 open import Cubical.Reflection.RecordEquiv
 open import Cubical.Data.Sigma
 
+open import LevelUtil
+
+record CategoryData o h : Type (ℓ-suc (o ⊔ h)) where
+  field
+    Ob : Type o
+    Hom : ∀ (A B : Ob) → Type h
+
+    id : ∀ {A : Ob} → Hom A A
+    _∘_ : ∀ {A B C : Ob} → Hom B C → Hom A B → Hom A C
+
+private variable
+  o h : Level
+
+record isCategory (𝒞 : CategoryData o h) : Type (o ⊔ h) where
+  open CategoryData 𝒞
+
+  field
+    isSetHom : ∀ {A B : Ob} → isSet (Hom A B)
+
+    identˡ : ∀ {A B : Ob} {f : Hom A B} → id ∘ f ≡ f
+    identʳ : ∀ {A B : Ob} {f : Hom A B} → f ∘ id ≡ f
+    assoc : ∀ {A B C D : Ob} {f : Hom A B} {g : Hom B C} {h : Hom C D} → (h ∘ g) ∘ f ≡ h ∘ (g ∘ f)
+
+record Category⬆ o h : Type (ℓ-suc (o ⊔ h)) where
+  constructor category⬆
+
+  field
+    Data : CategoryData o h
+    is-category : isCategory Data
+
+  open CategoryData Data public
+  open isCategory is-category public
+
+-- TODO: remove
 record Category o h : Type (ℓ-suc (ℓ-max o h)) where
   field
     Ob : Type o

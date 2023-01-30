@@ -6,8 +6,48 @@ open import Cubical.Foundations.HLevels
 
 open import HLevelUtil
 
+open import LevelUtil
+
 open import Category
 
+private variable
+  o h o′ h′ : Level
+  C D E : CategoryData o h
+  𝒞 𝒟 ℰ : Category o h
+
+record FunctorData (𝒞 : CategoryData o h) (𝒟 : CategoryData o′ h′) : Type (levelOfTerm 𝒞 ⊔ levelOfTerm 𝒟) where
+  private
+    module 𝒞 = CategoryData 𝒞
+    module 𝒟 = CategoryData 𝒟
+
+  field
+    F₀ : 𝒞.Ob → 𝒟.Ob
+    F₁ : ∀ {A B : 𝒞.Ob} → 𝒞.Hom A B → 𝒟.Hom (F₀ A) (F₀ B)
+
+  ₀ = F₀
+  ₁ = F₁
+
+record isFunctor {𝒞 : CategoryData o h} {𝒟 : CategoryData o′ h′} (F : FunctorData 𝒞 𝒟) : Type (o ⊔ h ⊔ h′) where
+  private
+    module 𝒞 = CategoryData 𝒞
+    module 𝒟 = CategoryData 𝒟
+    module F = FunctorData F
+
+  field
+    identity : ∀ {A : 𝒞.Ob} → F.₁ (𝒞.id {A}) ≡ 𝒟.id
+    compose : ∀ {A B C : 𝒞.Ob} {f : 𝒞.Hom A B} {g : 𝒞.Hom B C} → F.₁ (g 𝒞.∘ f) ≡ F.₁ g 𝒟.∘ F.₁ f
+
+record Functor⬆ (𝒞 : CategoryData o h) (𝒟 : CategoryData o′ h′) : Type (levelOfTerm 𝒞 ⊔ levelOfTerm 𝒟) where
+  constructor functor⬆
+
+  field
+    Data : FunctorData 𝒞 𝒟
+    is-functor : isFunctor Data
+
+  open FunctorData Data public
+  open isFunctor is-functor public
+
+-- TODO: remove
 record Functor {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) : Type (ℓ-max o (ℓ-max h (ℓ-max o′ h′))) where
   private
     module 𝒞 = Category.Category 𝒞
@@ -22,10 +62,36 @@ record Functor {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h�
   ₀ = F₀
   ₁ = F₁
 
+idFunctorData : ∀ {𝒞 : CategoryData o h} → FunctorData 𝒞 𝒞
+idFunctorData = record { F₀ = λ A → A ; F₁ = λ f → f }
+
+isFunctorIdFunctorData : ∀ {𝒞 : CategoryData o h} → isFunctor (idFunctorData {𝒞 = 𝒞})
+isFunctorIdFunctorData = record { identity = refl ; compose = refl }
+
+idFunctor⬆ : ∀ {𝒞 : CategoryData o h} → Functor⬆ 𝒞 𝒞
+idFunctor⬆ = functor⬆ idFunctorData isFunctorIdFunctorData
+
+-- TODO: remove
 module _ {o h} {𝒞 : Category o h} where
   idFunctor : Functor 𝒞 𝒞
   idFunctor = record { F₀ = λ A → A ; F₁ = λ f → f ; identity = refl ; compose = refl }
 
+_∘FData_ : FunctorData D E → FunctorData C D → FunctorData C E
+_∘FData_ G F = record { F₀ = λ A → G.₀ (F.₀ A) ; F₁ = λ A → G.₁ (F.₁ A) }
+  where
+    module F = FunctorData F
+    module G = FunctorData G
+
+isFunctor-∘F : (G : Functor⬆ D E) (F : Functor⬆ C D) → isFunctor (Functor⬆.Data G ∘FData Functor⬆.Data F)
+isFunctor-∘F G F = record { identity = cong G.₁ F.identity ∙ G.identity ; compose = cong G.₁ F.compose ∙ G.compose }
+  where
+    module F = Functor⬆ F
+    module G = Functor⬆ G
+
+_∘F⬆_ : Functor⬆ D E → Functor⬆ C D → Functor⬆ C E
+G ∘F⬆ F = functor⬆ (Functor⬆.Data G ∘FData Functor⬆.Data F) (isFunctor-∘F G F)
+
+-- TODO: remove
 module _ {o h o′ h′ o″ h″} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} where
   _∘F_ : Functor 𝒟 ℰ → Functor 𝒞 𝒟 → Functor 𝒞 ℰ
   G ∘F F = record
@@ -121,11 +187,6 @@ module _ {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) whe
       compose : ∀ {A B C} {f : 𝒞 [ A , B ]} {g : 𝒞 [ B , C ]}
         → PathP (λ i → PathP (λ j → Path (𝒟 [ r i j A , r i j C ]) (F₁ (𝒞 [ g ∘ f ]) i j) (𝒟 [ F₁ g i j ∘ F₁ f i j ])) F.compose G.compose) (λ k → Functor.compose (p k)) (λ k → Functor.compose (q k))
       compose = helper′ F.compose G.compose (λ k → Functor.compose (p k)) (λ k → Functor.compose (q k)) r λ i j f → F₁ f i j
-
-private
-  variable
-    o h : Level
-    𝒞 𝒟 : Category o h
 
 isFaithful : (F : Functor 𝒞 𝒟) → Type _
 isFaithful {𝒞 = 𝒞} F = ∀ {A B} (f g : 𝒞.Hom A B) → F.₁ f ≡ F.₁ g → f ≡ g
