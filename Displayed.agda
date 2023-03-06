@@ -71,6 +71,7 @@ record Displayed {o h} (𝒞 : Category o h) o′ h′ : Type (ℓ-suc (ℓ-max 
         ; _∘_ = λ where (g , g′) (f , f′) → (𝒞 [ g ∘ f ]) , (g′ 𝒟.∘ f′)
         ; identˡ = λ where {f = f , f′} i → 𝒞.identˡ {f = f} i , 𝒟.identˡ {f′ = f′} i
         ; identʳ = λ where {f = f , f′} i → 𝒞.identʳ {f = f} i , 𝒟.identʳ {f′ = f′} i
+        ; ident² = λ where {A = A , A′} i → 𝒞.identˡ {A = A} i , 𝒟.identˡ {f′ = 𝒟.id} i
         ; assoc = λ where {f = f , f′} {g = g , g′} {h = h , h′} i → 𝒞.assoc {f = f} {g = g} {h = h} i , 𝒟.assoc {f′ = f′} {g′ = g′} {h′ = h′} i
         }
   where
@@ -196,6 +197,7 @@ module _ {o h} {𝒞 : Category o h} {o′ h′} (𝒟 : Displayed 𝒞 o′ h�
                       ; _∘_ = λ g′ f′ → subst (λ x → 𝒟.Hom x _ _) 𝒞.identˡ (g′ 𝒟.∘ f′)
                       ; identˡ = fromPathP 𝒟.identˡ
                       ; identʳ = subst (λ x → subst (λ y → 𝒟.Hom y _ _) x _ ≡ _) (𝒞.ident-unique 𝒞.identʳ) (fromPathP 𝒟.identʳ)
+                      ; ident² = fromPathP 𝒟.identˡ
                       ; assoc = λ where {A = X} {B = Y} {C = Z} {D = W} {f = f′} {g = g′} {h = h′} →
                                               let a = fromPathP (𝒟.assoc {f′ = f′} {g′ = g′} {h′ = h′}) in
                                               let b : transport (λ i → 𝒟.Hom (𝒞.id 𝒞.∘ (𝒞.identˡ {f = 𝒞.id}) i) X W) (transport (λ i → 𝒟.Hom (𝒞.assoc {f = 𝒞.id} {g = 𝒞.id} {h = 𝒞.id} i) X W) ((h′ 𝒟.∘ g′) 𝒟.∘ f′))

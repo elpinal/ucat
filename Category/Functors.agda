@@ -26,6 +26,7 @@ Functors = record
              ; _∘_ = vertComp
              ; identˡ = vertCompIdentˡ
              ; identʳ = vertCompIdentʳ
+             ; ident² = vertCompIdentˡ
              ; assoc = λ where {f = α} {g = β} {h = γ} → vertCompAssoc {α = α} {β = β} {γ = γ}
              }
 

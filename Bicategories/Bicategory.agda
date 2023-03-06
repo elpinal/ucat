@@ -106,6 +106,7 @@ module _ (𝔹 : Bicategory o c d) where
                  ; _∘_ = _·_
                  ; identˡ = ident₂ˡ
                  ; identʳ = ident₂ʳ
+                 ; ident² = ident₂ˡ
                  ; assoc = assoc₂
                  }
 

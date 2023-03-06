@@ -20,6 +20,7 @@ Sets ℓ = record
            ; _∘_ = λ g f x → g (f x)
            ; identˡ = refl
            ; identʳ = refl
+           ; ident² = refl
            ; assoc = refl
            }
 

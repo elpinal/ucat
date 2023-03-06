@@ -21,6 +21,7 @@ record Category o h : Type (ℓ-suc (ℓ-max o h)) where
 
     identˡ : ∀ {A B : Ob} {f : Hom A B} → id ∘ f ≡ f
     identʳ : ∀ {A B : Ob} {f : Hom A B} → f ∘ id ≡ f
+    ident² : ∀ {A : Ob} → id {A = A} ∘ id ≡ id
     assoc : ∀ {A B C D : Ob} {f : Hom A B} {g : Hom B C} {h : Hom C D} → (h ∘ g) ∘ f ≡ h ∘ (g ∘ f)
 
   ident-unique : ∀ {A : Ob} → (p : id {A = A} ∘ id ≡ id) → p ≡ identˡ
@@ -43,6 +44,7 @@ opposite 𝒞 = record
              ; _∘_ = λ x y → y ∘ x
              ; identˡ = identʳ
              ; identʳ = identˡ
+             ; ident² = ident²
              ; assoc = sym assoc
              }
   where open Category 𝒞

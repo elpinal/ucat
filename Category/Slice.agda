@@ -51,5 +51,6 @@ module _ (X : Ob) where
            ; _∘_ = compose
            ; identˡ = ΣPathP (identˡ , toPathP (isSetHom _ _ _ _))
            ; identʳ = ΣPathP (identʳ , toPathP (isSetHom _ _ _ _))
+           ; ident² = ΣPathP (identˡ , toPathP (isSetHom _ _ _ _))
            ; assoc = ΣPathP (assoc , toPathP (isSetHom _ _ _ _))
            }
