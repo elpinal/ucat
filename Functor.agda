@@ -8,7 +8,9 @@ open import HLevelUtil
 
 open import Category
 
-record Functor {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) : Type (ℓ-max o (ℓ-max h (ℓ-max o′ h′))) where
+private variable o h o′ h′ : Level
+
+record Functor (𝒞 : Category o h) (𝒟 : Category o′ h′) : Type (ℓ-max o (ℓ-max h (ℓ-max o′ h′))) where
   private
     module 𝒞 = Category.Category 𝒞
     module 𝒟 = Category.Category 𝒟
@@ -22,11 +24,15 @@ record Functor {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h�
   ₀ = F₀
   ₁ = F₁
 
-module _ {o h} {𝒞 : Category o h} where
+oppositeF : ∀ {𝒞 : Category o h} {𝒟 : Category o′ h′} → Functor 𝒞 𝒟 → Functor (opposite 𝒞) (opposite 𝒟)
+oppositeF F = record { F₀ = F₀ ; F₁ = F₁ ; identity = identity ; compose = compose }
+  where open Functor F
+
+module _ {𝒞 : Category o h} where
   idFunctor : Functor 𝒞 𝒞
   idFunctor = record { F₀ = λ A → A ; F₁ = λ f → f ; identity = refl ; compose = refl }
 
-module _ {o h o′ h′ o″ h″} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} where
+module _ {o″ h″} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} where
   _∘F_ : Functor 𝒟 ℰ → Functor 𝒞 𝒟 → Functor 𝒞 ℰ
   G ∘F F = record
     { F₀ = λ A → G.₀ (F.₀ A)
@@ -38,7 +44,7 @@ module _ {o h o′ h′ o″ h″} {𝒞 : Category o h} {𝒟 : Category o′ h
       module F = Functor F
       module G = Functor G
 
-module _ {o h o′ h′} {𝒞 : Category o h} {𝒟 : Category o′ h′} where
+module _ {𝒞 : Category o h} {𝒟 : Category o′ h′} where
   private
     module 𝒟 = Category.Category 𝒟
 
@@ -66,7 +72,7 @@ module _ {o h o′ h′} {𝒞 : Category o h} {𝒟 : Category o′ h′} where
     where
       module F = Functor F
 
-module _ {o h o′ h′ o″ h″ o‴ h‴} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} {ℱ : Category o‴ h‴} where
+module _ {o″ h″ o‴ h‴} {𝒞 : Category o h} {𝒟 : Category o′ h′} {ℰ : Category o″ h″} {ℱ : Category o‴ h‴} where
   private
     module ℱ = Category.Category ℱ
 
@@ -82,7 +88,7 @@ module _ {o h o′ h′ o″ h″ o‴ h‴} {𝒞 : Category o h} {𝒟 : Categ
       module G = Functor G
       module H = Functor H
 
-module _ {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) where
+module _ (𝒞 : Category o h) (𝒟 : Category o′ h′) where
   private
     module 𝒞 = Category.Category 𝒞
     module 𝒟 = Category.Category 𝒟
@@ -124,7 +130,6 @@ module _ {o h} (𝒞 : Category o h) {o′ h′} (𝒟 : Category o′ h′) whe
 
 private
   variable
-    o h : Level
     𝒞 𝒟 : Category o h
 
 isFaithful : (F : Functor 𝒞 𝒟) → Type _
