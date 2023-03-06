@@ -26,13 +26,31 @@ record Category o h : Type (ℓ-suc (ℓ-max o h)) where
   ident-unique : ∀ {A : Ob} → (p : id {A = A} ∘ id ≡ id) → p ≡ identˡ
   ident-unique p = isSetHom _ _ p _
 
-_[_,_] : ∀ {o h} (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob 𝒞 → Type h
+private variable o h : Level
+
+_[_,_] : ∀ (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob 𝒞 → Type h
 𝒞 [ A , B ] = Category.Hom 𝒞 A B
 
-_[_∘_] : ∀ {o h} (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
+_[_∘_] : ∀ (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
 𝒞 [ g ∘ f ] = Category._∘_ 𝒞 g f
 
-module _ {o h} (𝒞 : Category o h) where
+opposite : Category o h → Category o h
+opposite 𝒞 = record
+             { Ob = Ob
+             ; Hom = λ A B → Hom B A
+             ; isSetHom = isSetHom
+             ; id = id
+             ; _∘_ = λ x y → y ∘ x
+             ; identˡ = identʳ
+             ; identʳ = identˡ
+             ; assoc = sym assoc
+             }
+  where open Category 𝒞
+
+_ : ∀ {𝒞 : Category o h} → opposite (opposite 𝒞) ≡ 𝒞
+_ = refl
+
+module _ (𝒞 : Category o h) where
   open Category 𝒞
 
   -- TODO: Swap isoˡ and isoʳ.
