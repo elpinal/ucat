@@ -9,6 +9,9 @@ import NaturalTransformation
 import Category.Sets
 import Category.Slice
 import Category.Functors
+import Category.Zero
+import Category.One
+import Category.Two
 
 import Functor.Diagonal
 
