@@ -13,11 +13,13 @@ open import Cubical.Data.Unit
 open import Functor
 open import NaturalTransformation
 
+open import LevelUtil
+
 private
   module 𝒞 = Category.Category 𝒞
   module 𝒟 = Category.Category 𝒟
 
-Functors : Category (ℓ-max (ℓ-max (ℓ-max o h) o′) h′) (ℓ-max (ℓ-max o h) h′)
+Functors : Category (o ⊔ h ⊔ o′ ⊔ h′) (o ⊔ h ⊔ h′)
 Functors = record
              { Ob = Functor 𝒞 𝒟
              ; Hom = NaturalTransformation

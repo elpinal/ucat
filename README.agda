@@ -14,6 +14,7 @@ import Category.One
 import Category.Two
 
 import Functor.Diagonal
+import Functor.Yoneda
 
 import Limit
 
