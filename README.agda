@@ -15,6 +15,8 @@ import Category.Two
 
 import Functor.Diagonal
 
+import Limit
+
 import Displayed
 import Displayed.Functor
 import Displayed.Reindex
