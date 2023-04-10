@@ -1,9 +1,13 @@
 open import Category
+
+module Limit {o h o′ h′} (𝕀 : Category o h) (𝒞 : Category o′ h′) where
+
 open import Cubical.Core.Everything
-
-module Limit {o h o′ h′ : Level} (𝕀 : Category o h) (𝒞 : Category o′ h′) where
-
 open import Cubical.Foundations.Prelude
+open import Cubical.Foundations.HLevels
+open import Cubical.Foundations.Equiv
+import Cubical.Foundations.Isomorphism as Isomorphism
+open import Cubical.Reflection.RecordEquiv
 
 open import Functor
 open import Functor.Diagonal
@@ -43,10 +47,21 @@ module _ {a : 𝒞.Ob} {F : Functor 𝕀 𝒞} where
   isLimit : Cone⟨ a , F ⟩ → Type (o ⊔ h ⊔ o′ ⊔ h′)
   isLimit α = ∀ (x : 𝒞.Ob) → isEquiv (λ f → precompose {x = x} f α)
 
+  isPropIsLimit : ∀ α → isProp (isLimit α)
+  isPropIsLimit α = isPropΠ λ x → isPropIsEquiv λ f → precompose f α
+
 record Limit⟨_,_⟩ (a : Ob) (F : Functor 𝕀 𝒞) : Type (o ⊔ h ⊔ o′ ⊔ h′) where
   field
     cone : Cone⟨ a , F ⟩
     is-limit : isLimit cone
+
+unquoteDecl Limit⟨⟩IsoΣ = declareRecordIsoΣ Limit⟨⟩IsoΣ (quote Limit⟨_,_⟩)
+module Limit⟨⟩IsoΣ {a} {F} = Isomorphism.Iso (Limit⟨⟩IsoΣ {a} {F})
+
+isSetLimit⟨⟩ : ∀ a F → isSet (Limit⟨ a , F ⟩)
+isSetLimit⟨⟩ a F =
+  isSetRetract Limit⟨⟩IsoΣ.fun Limit⟨⟩IsoΣ.inv Limit⟨⟩IsoΣ.leftInv
+    (isSetΣSndProp isSetNaturalTransformation isPropIsLimit)
 
 record Limit (F : Functor 𝕀 𝒞) : Type (o ⊔ h ⊔ o′ ⊔ h′) where
   field
