@@ -109,6 +109,7 @@ assoc-composeCospanHom {C = C} f g (id p) = J P base p
         composeCospanHom (id refl) (composeCospanHom g f)
       ∎
 
+-- TODO: rename to `WalkingCospan`
 Cospan : Category ℓ-zero ℓ-zero
 Cospan = record
            { Ob = cospanOb
