@@ -4,5 +4,6 @@ include: .
 flags:
   --safe
   --exact-split
-  --without-K
+  --cubical-compatible
   --cubical
+  -WnoUnsupportedIndexedMatch
