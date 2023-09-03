@@ -10,7 +10,8 @@ open import Category.Functors
 open import Functor
 open import NaturalTransformation
 
-module 𝒞 = Category.Category 𝒞
+private
+  module 𝒞 = Category.Category 𝒞
 
 private variable
   ℓ : Level
