@@ -52,3 +52,12 @@ Hom₁[ f ,-] = record
   ; identity = componentEmbed (Hom₁[-,_] 𝒞.id) _ λ i A f → 𝒞.identˡ {f = f} i
   ; compose = λ { {f = f} {g = g} → componentEmbed (Hom₁[-,_] (𝒞 [ _ ∘ _ ])) _ λ i A h → 𝒞.assoc {f = h} {g = f} {h = g} i }
   }
+
+-- Katakana notation for よ. Not to be confused with existential quantifier!
+ヨ : Functor (opposite 𝒞) (Functors 𝒞 (Sets h))
+ヨ = record
+  { F₀ = λ A → Hom[ A ,-]
+  ; F₁ = λ f → Hom₁[ f ,-]
+  ; identity = componentEmbed Hom₁[ 𝒞.id ,-] _ λ i A f → 𝒞.identʳ {f = f} i
+  ; compose = λ { {f = f} {g = g} → componentEmbed Hom₁[ (𝒞 [ _ ∘ _ ]) ,-] _ (λ i A h → 𝒞.assoc {f = g} {g = f} {h = h} ((~ i)))}
+  }
