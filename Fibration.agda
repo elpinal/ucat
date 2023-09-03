@@ -157,7 +157,7 @@ module _ {o h} {𝒞 : Category o h} {o₁ h₁} (𝒟 : Displayed 𝒞 o₁ h�
     p : subst (λ x → 𝒟.Hom x L′.X L′.X) (isIso.isoˡ (Iso.is-iso (isoId 𝒞))) (k′ 𝒟.∘ k) ≡ 𝒟.id
     p = Factorization.unique₂ cc (subst (λ x → 𝒟.Hom x L′.X L′.X) (isIso.isoˡ (Iso.is-iso (isoId 𝒞))) (k′ 𝒟.∘ k)) 𝒟.id
       u
-      (sym (fromPathP (symP (𝒟.identʳ))))
+      (sym (fromPathP {A = λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L′.X Y} (symP (𝒟.identʳ))))
 
     cc′ : Factorization L.f′ 𝒞.id (subst (λ x → 𝒟.Hom x _ _) (sym 𝒞.identʳ) L.f′)
     cc′ = isCartesian.univ-prop L.is-cartesian 𝒞.id (subst (λ x → 𝒟.Hom x _ _) (sym 𝒞.identʳ) L.f′)
@@ -165,7 +165,7 @@ module _ {o h} {𝒞 : Category o h} {o₁ h₁} (𝒟 : Displayed 𝒞 o₁ h�
     q : subst (λ x → 𝒟.Hom x L.X L.X) (isIso.isoʳ (Iso.is-iso (isoId 𝒞))) (k 𝒟.∘ k′) ≡ 𝒟.id
     q = Factorization.unique₂ cc′ (subst (λ x → 𝒟.Hom x L.X L.X) (isIso.isoʳ (Iso.is-iso (isoId 𝒞))) (k 𝒟.∘ k′)) 𝒟.id
       v
-      (sym (fromPathP (symP (𝒟.identʳ))))
+      (sym (fromPathP {A = λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L.X Y} (symP (𝒟.identʳ))))
 
     cartesianLiftDomainVertIso : VertIso 𝒟 L.X L′.X
     cartesianLiftDomainVertIso = record { f′ = k′ ; is-disp-iso = record { inv = k ; isoˡ = toPathP p ; isoʳ = toPathP q } }
@@ -174,7 +174,7 @@ module _ {o h} {𝒞 : Category o h} {o₁ h₁} (𝒟 : Displayed 𝒞 o₁ h�
     cartesianLiftDomainUnique u = vertIsoToId 𝒟 u cartesianLiftDomainVertIso
 
     triangle : PathP (λ i → 𝒟.Hom (𝒞.identʳ {f = f} i) L′.X Y) (L.f′ 𝒟.∘ k) L′.f′
-    triangle = symP {A = (λ i → 𝒟.Hom (𝒞.identʳ {f = f} (~ i)) L′.X Y)} (toPathP (sym t1))
+    triangle = symP {A = (λ i → 𝒟.Hom (𝒞.identʳ {f = f} i) L′.X Y)} (toPathP (sym t1))
 
     f′-unique : (u : isUnivDisplayed 𝒟) → PathP (λ i → 𝒟.Hom f (cartesianLiftDomainUnique u i) Y) L.f′ L′.f′
     f′-unique u = toPathP r

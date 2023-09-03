@@ -98,7 +98,7 @@ module _ {F G : Functor 𝒞 𝒟} where
           transport (λ j → 𝒟 [ F.₀ (transportRefl A j) , F.₀ (transportRefl A j) ]) 𝒟.id
         ≡⟨ refl ⟩
           subst (λ x → 𝒟 [ F.₀ x , F.₀ x ]) (transportRefl A) (𝒟.id {A = F.₀ (transport refl A)})
-        ≡⟨ substCommSlice {A = 𝒞.Ob} (λ _ → Unit*) (λ x → 𝒟 [ F.₀ x , F.₀ x ]) (λ A′ b → 𝒟.id {A = F.₀ A′}) (transportRefl A) tt* ⟩
+        ≡⟨ substCommSlice {A = 𝒞.Ob} (λ _ → Unit* {h′}) (λ x → 𝒟 [ F.₀ x , F.₀ x ]) (λ A′ b → 𝒟.id {A = F.₀ A′}) (transportRefl A) tt* ⟩
           𝒟.id {A = F.₀ A}
         ≡⟨ sym (transportRefl _) ⟩
           transport (λ _ → 𝒟 [ F.₀ A , F.₀ A ]) 𝒟.id

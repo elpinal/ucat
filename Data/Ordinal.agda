@@ -24,7 +24,7 @@ module Misc where
   Power A ℓ₁ = A → hProp ℓ₁
 
   Image : ∀ {A : hSet ℓ} {B : hSet ℓ′} → (P : Power (typ A) ℓ″) → ((a : typ A) → typ (P a) → typ B) → ∀ (y : typ B) → Type (ℓ-max ℓ (ℓ-max ℓ′ ℓ″))
-  Image {A = A , _} {B = B , _} P f y = ∥ (Σ[ x ∈ A ] Σ[ Px ∈ typ (P x) ] (f x Px ≡ y)) ∥
+  Image {A = A , _} {B = B , _} P f y = ∥ (Σ[ x ∈ A ] Σ[ Px ∈ typ (P x) ] (f x Px ≡ y)) ∥₁
 
 module _ {ℓ} (A : Type ℓ) (isSetA : isSet A) {ℓ′} (_<_ : A → A → Type ℓ′) (isProp< : ∀ a b → isProp (a < b)) where
   data isAcc (a : A) : Type (ℓ-max ℓ ℓ′) where
@@ -112,7 +112,7 @@ record Ordinal ℓ ℓ′ : Type (ℓ-suc (ℓ-max ℓ ℓ′)) where
   ; isSetA = isSetℕ
   ; ext-rel = record
     { _<_ = Nat._<_
-    ; isProp< = λ _ _ → Nat.m≤n-isProp
+    ; isProp< = λ _ _ → Nat.isProp≤
     ; is-extensional = record { wf = ℕwf ; ext = ℕext }
     }
   ; transitive = λ _ _ _ → Nat.<-trans
@@ -123,19 +123,19 @@ record Ordinal ℓ ℓ′ : Type (ℓ-suc (ℓ-max ℓ ℓ′)) where
     ℕext zero (suc b) f = ⊥.rec (subst ¬_ (f 0) Nat.¬-<-zero (Nat.suc-≤-suc Nat.zero-≤))
     ℕext (suc a) zero f = ⊥.rec (subst ¬_ (sym (f 0)) Nat.¬-<-zero (Nat.suc-≤-suc Nat.zero-≤))
     ℕext (suc a) (suc b) f = cong suc
-      ( ℕext a b λ c → hPropExt Nat.m≤n-isProp Nat.m≤n-isProp
+      ( ℕext a b λ c → hPropExt Nat.isProp≤ Nat.isProp≤
           (λ x → Nat.pred-≤-pred (transport (f (suc c)) (Nat.suc-≤-suc x)))
           (λ x → Nat.pred-≤-pred (transport (sym (f (suc c))) (Nat.suc-≤-suc x)))
       )
 
-    ℕwf : ∀ n → isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.m≤n-isProp) n
+    ℕwf : ∀ n → isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.isProp≤) n
     ℕwf zero = acc< λ m l → ⊥.rec (Nat.¬-<-zero l)
     ℕwf (suc n) = acc< u
       where
-        isAcc-n : isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.m≤n-isProp) n
+        isAcc-n : isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.isProp≤) n
         isAcc-n = ℕwf n
 
-        u : ∀ m (l : m Nat.< suc n) → isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.m≤n-isProp) m
+        u : ∀ m (l : m Nat.< suc n) → isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.isProp≤) m
         u m l with Nat.<-split l | isAcc-n
         ... | inl m<n | acc< t = t m m<n
-        ... | inr p | _ = subst (isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.m≤n-isProp)) (sym p) isAcc-n
+        ... | inr p | _ = subst (isAcc ℕ isSetℕ Nat._<_ (λ _ _ → Nat.isProp≤)) (sym p) isAcc-n
