@@ -17,6 +17,7 @@ import Category.Cospan
 import Functor.Diagonal
 import Functor.Presheaf
 import Functor.Hom
+import Functor.Hom.Properties
 
 import Limit
 
