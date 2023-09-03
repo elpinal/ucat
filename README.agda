@@ -15,7 +15,8 @@ import Category.Two
 import Category.Cospan
 
 import Functor.Diagonal
-import Functor.Yoneda
+import Functor.Presheaf
+import Functor.Hom
 
 import Limit
 

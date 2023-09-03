@@ -1,6 +1,6 @@
 open import Category
 
-module Functor.Yoneda {o h} (𝒞 : Category o h) where
+module Functor.Hom {o h} (𝒞 : Category o h) where
 
 open import Cubical.Core.Everything
 open import Cubical.Foundations.Prelude
@@ -44,7 +44,7 @@ Hom₁[ f ,-] = record
   ; commute = λ A B {f = f′} i g → 𝒞.assoc {f = f} {g = g} {h = f′} i
   }
 
--- Yoneda embedding.
+-- Hom embedding.
 よ : Functor 𝒞 (Functors (opposite 𝒞) (Sets h))
 よ = record
   { F₀ = λ B → Hom[-, B ]
