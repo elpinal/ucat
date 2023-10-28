@@ -15,4 +15,4 @@ private
 record ConcreteCategory (𝒞 : Category o h) o′ h′ : Type (o ⊔ h ⊔ ℓ-suc (o′ ⊔ h′)) where
   field
     𝒟 : Category o′ h′
-    F : FaithfulFunctor 𝒟 𝒞
+    U : FaithfulFunctor 𝒟 𝒞

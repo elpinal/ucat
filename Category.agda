@@ -10,6 +10,8 @@ open import Cubical.Foundations.Isomorphism using (isoToPath)
 open import Cubical.Reflection.RecordEquiv
 open import Cubical.Data.Sigma
 
+open import LevelUtil
+
 record Category o h : Type (ℓ-suc (ℓ-max o h)) where
   field
     Ob : Type o
@@ -51,6 +53,15 @@ opposite 𝒞 = record
 
 _ : ∀ {𝒞 : Category o h} → opposite (opposite 𝒞) ≡ 𝒞
 _ = refl
+
+isStrictCategory : Category o h → Type o
+isStrictCategory 𝒞 = isSet (Category.Ob 𝒞)
+
+record StrictCategory o h : Type (ℓ-suc (o ⊔ h)) where
+  field
+    𝒞 : Category o h
+    is-strict-category : isStrictCategory 𝒞
+  open Category 𝒞 public
 
 module _ (𝒞 : Category o h) where
   open Category 𝒞

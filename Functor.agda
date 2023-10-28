@@ -30,6 +30,9 @@ oppositeF : ∀ {𝒞 : Category o h} {𝒟 : Category o′ h′} → Functor �
 oppositeF F = record { F₀ = F₀ ; F₁ = F₁ ; identity = identity ; compose = compose }
   where open Functor F
 
+StrictFunctor : StrictCategory o h → StrictCategory o′ h′ → Type (o ⊔ h ⊔ o′ ⊔ h′)
+StrictFunctor 𝒞 𝒟 = Functor (StrictCategory.𝒞 𝒞) (StrictCategory.𝒞 𝒟)
+
 module _ {𝒞 : Category o h} where
   idFunctor : Functor 𝒞 𝒞
   idFunctor = record { F₀ = λ A → A ; F₁ = λ f → f ; identity = refl ; compose = refl }

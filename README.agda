@@ -15,6 +15,7 @@ import Category.One
 import Category.Two
 import Category.Cospan
 
+import Functor.Concrete
 import Functor.Diagonal
 import Functor.Presheaf
 import Functor.Hom
