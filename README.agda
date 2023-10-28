@@ -20,6 +20,7 @@ import Functor.Hom
 import Functor.Hom.Properties
 import Functor.Representable
 import Functor.Representable.Properties
+import Functor.Adjoint
 
 import Limit
 
