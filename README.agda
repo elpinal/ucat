@@ -30,6 +30,7 @@ import Displayed
 import Displayed.Functor
 import Displayed.Reindex
 import Displayed.Subcategory
+import Displayed.FromFunctor
 
 import Fibration
 

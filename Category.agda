@@ -37,6 +37,17 @@ _[_,_] : ∀ (𝒞 : Category o h) → Category.Ob 𝒞 → Category.Ob 𝒞 →
 _[_∘_] : ∀ (𝒞 : Category o h) {A B C : Category.Ob 𝒞} → 𝒞 [ B , C ] → 𝒞 [ A , B ] → 𝒞 [ A , C ]
 𝒞 [ g ∘ f ] = Category._∘_ 𝒞 g f
 
+assoc-inner : ∀ (𝒞 : Category o h) {A B C D E} {f : 𝒞 [ A , B ]} {g : 𝒞 [ B , C ]} {h : 𝒞 [ C , D ]} {i : 𝒞 [ D , E ]}
+  → 𝒞 [ 𝒞 [ i ∘ h ] ∘ 𝒞 [ g ∘ f ] ] ≡ 𝒞 [ 𝒞 [ i ∘ 𝒞 [ h ∘ g ] ] ∘ f ]
+assoc-inner 𝒞 {f = f} {g} {h} {i} =
+    (i ∘ h) ∘ (g ∘ f)
+  ≡⟨ sym assoc ⟩
+    ((i ∘ h) ∘ g) ∘ f
+  ≡⟨ cong (_∘ f) assoc ⟩
+    (i ∘ (h ∘ g)) ∘ f
+  ∎
+  where open Category 𝒞
+
 opposite : Category o h → Category o h
 opposite 𝒞 = record
              { Ob = Ob
