@@ -3,6 +3,7 @@ module Functor where
 open import Cubical.Core.Everything
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.HLevels
+open import Cubical.Functions.Surjection
 
 open import HLevelUtil
 
@@ -131,6 +132,10 @@ module _ (𝒞 : Category o h) (𝒟 : Category o′ h′) where
 private
   variable
     𝒞 𝒟 : Category o h
+
+isFull : (F : Functor 𝒞 𝒟) → Type _
+isFull {𝒞 = 𝒞} {𝒟 = 𝒟} F = ∀ {A B} → isSurjection (F.₁ {A = A} {B = B})
+  where module F = Functor F
 
 isFaithful : (F : Functor 𝒞 𝒟) → Type _
 isFaithful {𝒞 = 𝒞} F = ∀ {A B} (f g : 𝒞.Hom A B) → F.₁ f ≡ F.₁ g → f ≡ g
