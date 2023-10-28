@@ -7,6 +7,7 @@ import Functor
 import NaturalTransformation
 
 import Category.Sets
+import Category.Concrete
 import Category.Slice
 import Category.Functors
 import Category.Zero

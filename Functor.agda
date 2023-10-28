@@ -6,12 +6,13 @@ open import Cubical.Foundations.HLevels
 open import Cubical.Functions.Surjection
 
 open import HLevelUtil
+open import LevelUtil
 
 open import Category
 
 private variable o h o′ h′ : Level
 
-record Functor (𝒞 : Category o h) (𝒟 : Category o′ h′) : Type (ℓ-max o (ℓ-max h (ℓ-max o′ h′))) where
+record Functor (𝒞 : Category o h) (𝒟 : Category o′ h′) : Type (o ⊔ h ⊔ o′ ⊔ h′) where
   private
     module 𝒞 = Category.Category 𝒞
     module 𝒟 = Category.Category 𝒟
@@ -142,3 +143,9 @@ isFaithful {𝒞 = 𝒞} F = ∀ {A B} (f g : 𝒞.Hom A B) → F.₁ f ≡ F.�
   where
     module F = Functor F
     module 𝒞 = Category.Category 𝒞
+
+FullFunctor : Category o h → Category o′ h′ → Type (o ⊔ h ⊔ o′ ⊔ h′)
+FullFunctor 𝒞 𝒟 = Σ (Functor 𝒞 𝒟) isFull
+
+FaithfulFunctor : Category o h → Category o′ h′ → Type (o ⊔ h ⊔ o′ ⊔ h′)
+FaithfulFunctor 𝒞 𝒟 = Σ (Functor 𝒞 𝒟) isFaithful
