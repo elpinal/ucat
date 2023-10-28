@@ -6,6 +6,7 @@ import Category
 import Functor
 import NaturalTransformation
 
+import Category.Morphism
 import Category.Sets
 import Category.Concrete
 import Category.Slice
