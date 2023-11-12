@@ -1,12 +1,14 @@
 module README where
 
 import Data.Ordinal
+import Data.Monoid
 
 import Category
 import Functor
 import NaturalTransformation
 
 import Category.Morphism
+import Category.ObContr
 import Category.Sets
 import Category.Concrete
 import Category.Slice
