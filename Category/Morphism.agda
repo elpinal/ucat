@@ -16,8 +16,8 @@ open Category.Category 𝒞
 private
   variable A B : Ob    
 
-mono : Hom A B → Type (o ⊔ h)
-mono {A = A} f = ∀ C (g h : Hom C A) → f ∘ g ≡ f ∘ h → g ≡ h
+isMonic : Hom A B → Type (o ⊔ h)
+isMonic {A = A} f = ∀ C (g h : Hom C A) → f ∘ g ≡ f ∘ h → g ≡ h
 
-epi : Hom A B → Type (o ⊔ h)
-epi {B = B} f = ∀ C (g h : Hom B C) → g ∘ f ≡ h ∘ f → g ≡ h
+isEpic : Hom A B → Type (o ⊔ h)
+isEpic {B = B} f = ∀ C (g h : Hom B C) → g ∘ f ≡ h ∘ f → g ≡ h
